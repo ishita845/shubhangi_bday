@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday Queen 👑✨</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Poppins:wght@300;400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   DESIGN TOKENS — Korean-pastel "Heaven Court" palette
+   ============================================================ */
+:root{
+  --pearl:#FFF7FB;          /* base background, light */
+  --blush:#FFD9E8;          /* soft pink */
+  --lilac:#D9C6F5;          /* dreamy lavender */
+  --skymint:#C9E9F6;        /* pale sky */
+  --rosegold:#F3A6C2;       /* accent / buttons */
+  --gold:#F0C977;           /* sparkle gold */
+  --ink:#5B4368;            /* deep plum text */
+  --ink-soft:#8A718F;
+  --glass:rgba(255,255,255,0.45);
+  --glass-border:rgba(255,255,255,0.65);
+  --shadow-glow:0 0 40px rgba(243,166,194,0.45);
+  --font-display:'Gowun Batang', serif;
+  --font-body:'Poppins', sans-serif;
+  --font-script:'Caveat', cursive;
+  --transition-theme: background .6s ease, color .6s ease;
+}
+
+[data-theme="dark"]{
+  --pearl:#1C1326;
+  --blush:#3A2447;
+  --lilac:#2E2350;
+  --skymint:#22324A;
+  --rosegold:#E89BC4;
+  --gold:#F4D58D;
+  --ink:#F6E9FA;
+  --ink-soft:#C9B6D6;
+  --glass:rgba(40,28,55,0.55);
+  --glass-border:rgba(255,255,255,0.12);
+  --shadow-glow:0 0 50px rgba(232,155,196,0.35);
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--font-body);
+  background:linear-gradient(135deg,var(--pearl),var(--blush) 40%,var(--lilac) 75%,var(--skymint));
+  background-size:400% 400%;
+  animation:bgFlow 22s ease infinite;
+  color:var(--ink);
+  overflow-x:hidden;
+  transition:var(--transition-theme);
+  cursor:none; /* custom cursor used instead */
+}
+@keyframes bgFlow{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+a{color:inherit; text-decoration:none;}
+img{max-width:100%; display:block;}
+section{position:relative; padding:90px 6vw; z-index:2;}
+h1,h2,h3{font-family:var(--font-display);}
+
+/* ---------- custom cursor ---------- */
+.cursor-dot,.cursor-ring{
+  position:fixed; top:0; left:0; pointer-events:none; z-index:9999;
+  border-radius:50%; transform:translate(-50%,-50%);
+}
+.cursor-dot{width:8px; height:8px; background:var(--rosegold); box-shadow:0 0 8px var(--rosegold);}
+.cursor-ring{width:34px; height:34px; border:2px solid var(--rosegold); opacity:.6; transition:width .2s,height .2s, border-color .3s;}
+@media (max-width:768px){ .cursor-dot,.cursor-ring{display:none;} body{cursor:auto;} }
+/* any device whose primary input is touch (covers Android phones/tablets in any orientation) */
+@media (hover:none), (pointer:coarse){
+  .cursor-dot,.cursor-ring{display:none;}
+  body{cursor:auto;}
+}
+/* remove the grey flash Android shows on tap, and make every tap target comfortable */
+button, .gift-box, .quiz-options label, input{
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.fab{ min-width:48px; min-height:48px; } /* Android accessibility minimum tap size */
+
+/* ---------- loader ---------- */
+#loader{
+  position:fixed; inset:0; z-index:10000;
+  background:linear-gradient(135deg,#FFD9E8,#D9C6F5);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  transition:opacity .8s ease, visibility .8s ease;
+}
+.loader-heart{
+  width:60px; height:60px; position:relative; transform:rotate(-45deg);
+  animation:loaderPulse 1s ease-in-out infinite;
+}
+.loader-heart::before,.loader-heart::after{
+  content:''; position:absolute; width:60px; height:60px; background:var(--rosegold); border-radius:50%;
+}
+.loader-heart::before{ top:-30px; left:0; }
+.loader-heart::after{ left:30px; top:0; }
+@keyframes loaderPulse{ 0%,100%{transform:rotate(-45deg) scale(1);} 50%{transform:rotate(-45deg) scale(1.15);} }
+#loader p{margin-top:24px; font-family:var(--font-script); font-size:1.4rem; color:#5B4368;}
+
+/* ---------- floating ambient particles (hearts/stars/sparkles) ---------- */
+.particles{position:fixed; inset:0; pointer-events:none; z-index:5; overflow:hidden;}
+.particle{position:absolute; bottom:-10%; opacity:0; animation:floatUp linear forwards;}
+@keyframes floatUp{
+  0%{ transform:translateY(0) translateX(0) rotate(0deg) scale(.6); opacity:0;}
+  10%{opacity:.9;}
+  90%{opacity:.7;}
+  100%{ transform:translateY(-115vh) translateX(var(--drift,40px)) rotate(360deg) scale(1); opacity:0;}
+}
+
+/* ============================================================
+   INTRO SCREEN
+   ============================================================ */
+.intro-screen{
+  position:fixed; inset:0; z-index:200;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center;
+  background:radial-gradient(circle at 50% 30%, #fff5fa 0%, #ffd9e8 35%, #d9c6f5 75%, #c9e9f6 100%);
+  transition:opacity 1s ease, visibility 1s ease;
+  overflow:hidden;
+}
+.intro-screen.hide{ opacity:0; visibility:hidden; pointer-events:none; }
+.glow-title{
+  font-size:clamp(2.2rem,7vw,5rem);
+  color:#7a4f6b;
+  letter-spacing:2px;
+  text-shadow:0 0 20px #fff, 0 0 45px #ffd9e8, 0 0 80px #f3a6c2;
+  animation:titlePop 1.6s cubic-bezier(.2,.9,.25,1) both, titleGlow 3s ease-in-out infinite 1.6s;
+  position:relative; z-index:3;
+}
+.glow-title span{ color:#c46a93; }
+@keyframes titlePop{
+  0%{ transform:scale(.3) translateY(40px); opacity:0; filter:blur(8px);}
+  60%{ transform:scale(1.08) translateY(-6px); opacity:1; filter:blur(0);}
+  100%{ transform:scale(1) translateY(0);}
+}
+@keyframes titleGlow{
+  0%,100%{ text-shadow:0 0 20px #fff,0 0 45px #ffd9e8,0 0 80px #f3a6c2;}
+  50%{ text-shadow:0 0 30px #fff,0 0 65px #ffd9e8,0 0 110px #f3a6c2;}
+}
+.intro-sub{
+  margin-top:16px; font-family:var(--font-script); font-size:1.4rem; color:#9a6f8d;
+  opacity:0; animation:fadeUp 1.2s ease forwards 1.4s;
+  position:relative; z-index:3;
+}
+@keyframes fadeUp{ from{opacity:0; transform:translateY(15px);} to{opacity:1; transform:translateY(0);} }
+.enter-btn{
+  margin-top:46px; padding:16px 38px; font-size:1.05rem; font-weight:600;
+  border:none; border-radius:50px; cursor:pointer; color:#fff;
+  background:linear-gradient(135deg,#f3a6c2,#d9c6f5);
+  box-shadow:0 8px 30px rgba(243,166,194,.55);
+  opacity:0; animation:fadeUp 1.2s ease forwards 1.9s;
+  position:relative; z-index:3;
+  transition:transform .3s ease, box-shadow .3s ease;
+}
+.enter-btn:hover{ transform:translateY(-4px) scale(1.04); box-shadow:0 12px 40px rgba(243,166,194,.75); }
+
+/* decorative svg shapes used across intro + ambient layer */
+.deco{position:absolute; opacity:.85; filter:drop-shadow(0 2px 6px rgba(0,0,0,.05));}
+
+/* ============================================================
+   MAIN SITE
+   ============================================================ */
+.main-site{ position:relative; z-index:2; display:none; }
+.main-site.show{ display:block; animation:siteFade 1.2s ease both; }
+@keyframes siteFade{ from{opacity:0;} to{opacity:1;} }
+
+/* floating control buttons */
+.fab{
+  position:fixed; width:50px; height:50px; border-radius:50%; border:none; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; font-size:1.3rem;
+  background:var(--glass); border:1px solid var(--glass-border); backdrop-filter:blur(10px);
+  box-shadow:0 6px 20px rgba(0,0,0,.08); z-index:500; transition:transform .3s ease, opacity .3s ease;
+}
+.fab:hover{ transform:scale(1.1) rotate(8deg); }
+#themeToggle{ top:20px; right:20px; }
+#musicBtn{ top:20px; right:80px; }
+#backToTop{ bottom:30px; right:24px; opacity:0; pointer-events:none; }
+#backToTop.visible{ opacity:1; pointer-events:auto; }
+
+/* glassmorphism card base */
+.glass-card{
+  background:var(--glass); border:1px solid var(--glass-border);
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  border-radius:26px; box-shadow:0 10px 40px rgba(120,80,110,.15);
+}
+
+/* scroll reveal */
+.reveal{ opacity:0; transform:translateY(60px); transition:opacity .9s ease, transform .9s ease; }
+.reveal.active{ opacity:1; transform:translateY(0); }
+
+/* section eyebrow / title styling shared */
+.section-title{
+  text-align:center; font-size:clamp(1.8rem,4vw,2.8rem); margin-bottom:14px;
+  color:var(--ink);
+}
+.section-sub{ text-align:center; font-family:var(--font-script); font-size:1.2rem; color:var(--ink-soft); margin-bottom:50px; }
+
+/* ---------- HERO ---------- */
+.hero{ min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding-top:60px;}
+.hero-frame{
+  position:relative; width:min(560px,80vw); padding:18px;
+  border-radius:30px; margin-bottom:32px;
+}
+.hero-frame img{
+  width:100%; aspect-ratio:1/1.2; object-fit:cover; border-radius:22px;
+  box-shadow:var(--shadow-glow);
+}
+.hero-frame .ring{
+  position:absolute; inset:-12px; border-radius:34px;
+  border:2px dashed var(--rosegold); opacity:.6;
+  animation:spinSlow 16s linear infinite;
+}
+@keyframes spinSlow{ to{ transform:rotate(360deg); } }
+.hero-hearts span{
+  position:absolute; font-size:1.4rem; animation:heartFloat 4s ease-in-out infinite;
+  filter:drop-shadow(0 0 6px rgba(243,166,194,.6));
+}
+@keyframes heartFloat{ 0%,100%{ transform:translateY(0) scale(1);} 50%{ transform:translateY(-14px) scale(1.15);} }
+.hero-caption{
+  max-width:600px; font-size:clamp(1.1rem,2.6vw,1.5rem); line-height:1.6;
+  font-family:var(--font-script); color:var(--ink);
+}
+.hero-name{ display:block; margin-top:10px; font-family:var(--font-display); font-size:1.1rem; letter-spacing:3px; color:var(--rosegold); text-transform:uppercase;}
+
+/* ---------- VIDEO SECTION ---------- */
+.video-frame{
+  position: relative;
+  width: min(400px, 90vw);
+  margin: 0 auto;
+  border-radius: 30px;
+  overflow: hidden;
+  aspect-ratio: 9/16;
+  background: linear-gradient(135deg,#2c1f33,#553a5c);
+  box-shadow: var(--shadow-glow);
+
+  /* center everything */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.video-frame video{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.play-btn{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+
+  background: rgba(255,255,255,0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 2rem;
+  color: #c46a93;
+
+  z-index: 10; /* VERY IMPORTANT */
+  box-shadow: 0 0 30px rgba(255,255,255,.7);
+
+  animation: pulseRing 2.2s ease-in-out infinite;
+}
+
+/* ---------- QUIZ SECTION ---------- */
+.gate-card{
+  max-width:420px; margin:0 auto; padding:40px 32px; text-align:center;
+}
+.gate-card input{
+  width:100%; padding:14px 18px; margin:18px 0 10px; border-radius:14px; border:1px solid var(--glass-border);
+  background:rgba(255,255,255,.5); font-size:1.1rem; text-align:center; letter-spacing:4px;
+  color:var(--ink);
+}
+[data-theme="dark"] .gate-card input{ background:rgba(255,255,255,.08); color:var(--ink); }
+.gate-card button{
+  padding:12px 30px; border:none; border-radius:50px; font-weight:600; cursor:pointer;
+  background:linear-gradient(135deg,#f3a6c2,#d9c6f5); color:#fff; font-size:1rem;
+  box-shadow:0 8px 24px rgba(243,166,194,.45); transition:transform .25s ease;
+}
+.gate-card button:hover{ transform:translateY(-3px); }
+.gate-error{ color:#d1517a; font-size:.9rem; margin-top:8px; min-height:18px; }
+
+.quiz-box{ max-width:640px; margin:0 auto; }
+.quiz-q{ padding:28px; margin-bottom:22px; }
+.quiz-q h4{ font-family:var(--font-body); font-weight:600; margin-bottom:16px; font-size:1.05rem;}
+.quiz-options{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media (max-width:520px){ .quiz-options{ grid-template-columns:1fr; } }
+.quiz-options label{
+  display:block; padding:12px 14px; border-radius:14px; cursor:pointer;
+  background:rgba(255,255,255,.4); border:1px solid var(--glass-border); transition:.25s ease;
+  font-size:.95rem;
+}
+[data-theme="dark"] .quiz-options label{ background:rgba(255,255,255,.06); }
+.quiz-options input{ margin-right:8px; accent-color:var(--rosegold); }
+.quiz-options label:hover{ background:rgba(243,166,194,.25); transform:translateX(3px); }
+.quiz-submit{
+  display:block; margin:30px auto 0; padding:14px 40px; border:none; border-radius:50px;
+  background:linear-gradient(135deg,#f3a6c2,#d9c6f5); color:#fff; font-weight:600; font-size:1rem;
+  cursor:pointer; box-shadow:0 8px 24px rgba(243,166,194,.45);
+}
+.quiz-result{ text-align:center; padding:40px; font-size:1.3rem; font-family:var(--font-display); }
+
+/* ---------- GIFTS SECTION ---------- */
+.gift-grid{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:24px; max-width:900px; margin:0 auto;
+}
+.gift-box{
+  position:relative; aspect-ratio:1; border-radius:20px; cursor:pointer; overflow:hidden;
+  display:flex; align-items:center; justify-content:center; font-size:2.4rem;
+  background:linear-gradient(145deg,#f3a6c2,#d9c6f5);
+  box-shadow:0 10px 26px rgba(150,100,140,.3);
+  transition:transform .35s ease;
+}
+.gift-box:hover{ transform:translateY(-8px) rotate(-2deg); }
+.gift-box.opened{ background:linear-gradient(145deg,#fff,#ffe9f2); }
+.gift-label{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-align:center;
+  padding:10px; font-family:var(--font-display); font-size:1rem; color:#7a4f6b; opacity:0; transform:scale(.6);
+  transition:opacity .4s ease, transform .4s ease;
+}
+.gift-box.opened .gift-label{ opacity:1; transform:scale(1); }
+.gift-box.opened .gift-emoji{ display:none; }
+.gift-burst{ position:absolute; inset:0; pointer-events:none; }
+
+/* ---------- CAKE SECTION ---------- */
+.cake-wrap{ display:flex; flex-direction:column; align-items:center; }
+.cake{ position:relative; width:220px; }
+.cake-tier{ width:100%; height:60px; border-radius:14px; margin-top:-10px;
+  background:linear-gradient(180deg,#ffe3ef,#f3a6c2); box-shadow:inset 0 -6px 10px rgba(0,0,0,.08); }
+.cake-tier.top{ width:70%; margin:0 auto -10px; height:50px; background:linear-gradient(180deg,#fff0f6,#ffd0e3); }
+.cake-plate{ width:120%; margin-left:-10%; height:14px; border-radius:50%; background:var(--rosegold); box-shadow:0 6px 16px rgba(0,0,0,.15); margin-top:0;}
+.candles{ position:absolute; top:-46px; left:0; right:0; display:flex; justify-content:center; gap:16px; }
+.candle{ width:6px; height:36px; background:linear-gradient(180deg,#fff,#f3a6c2); border-radius:3px; position:relative; }
+.flame{
+  position:absolute; top:-16px; left:50%; transform:translateX(-50%); width:10px; height:16px;
+  background:radial-gradient(circle,#fff6c8,#f7b733 60%,#e0571b); border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;
+  animation:flicker 0.6s ease-in-out infinite alternate; transition:opacity .4s ease, transform .4s ease;
+}
+@keyframes flicker{ 0%{ transform:translateX(-50%) scale(1) rotate(-3deg);} 100%{ transform:translateX(-50%) scale(1.15) rotate(3deg);} }
+.flame.out{ opacity:0; transform:translateX(-50%) scale(0); }
+.blow-btn{
+  margin-top:60px; padding:14px 36px; border:none; border-radius:50px; font-weight:600; cursor:pointer;
+  background:linear-gradient(135deg,#f3a6c2,#d9c6f5); color:#fff; font-size:1rem;
+  box-shadow:0 8px 24px rgba(243,166,194,.45);
+}
+.wish-msg{
+  margin-top:26px; font-family:var(--font-script); font-size:1.6rem; color:var(--rosegold); opacity:0;
+  transition:opacity .8s ease;
+}
+.wish-msg.show{ opacity:1; }
+
+/* ---------- LETTER SECTION ---------- */
+.letter-paper{
+  max-width:640px; margin:0 auto; padding:50px 40px; position:relative;
+  background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,.35));
+}
+[data-theme="dark"] .letter-paper{ background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03)); }
+.letter-text{
+  font-family:var(--font-script); font-size:1.3rem; line-height:1.9; white-space:pre-wrap; color:var(--ink);
+}
+.letter-sign{ text-align:right; margin-top:20px; font-family:var(--font-display); font-size:1.1rem; color:var(--rosegold); }
+.cursor-blink{ display:inline-block; width:2px; background:var(--ink); margin-left:2px; animation:blink 1s step-end infinite; }
+@keyframes blink{ 50%{ opacity:0; } }
+
+footer{ text-align:center; padding:50px 20px 70px; font-family:var(--font-script); font-size:1.1rem; color:var(--ink-soft); }
+
+/* fx canvas for confetti / fireworks */
+#fxCanvas{ position:fixed; inset:0; pointer-events:none; z-index:9000; }
+</style>
+</head>
+<body>
+
+<!-- ============== LOADER ============== -->
+<div id="loader">
+  <div class="loader-heart"></div>
+  <p>preparing a little heaven for you...</p>
+</div>
+
+<!-- ============== CUSTOM CURSOR ============== -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- ============== AMBIENT FLOATING PARTICLES ============== -->
+<div class="particles" id="particles"></div>
+
+<!-- ============== INTRO SCREEN ============== -->
+<section class="intro-screen" id="intro">
+  <!-- decorative drifting svgs -->
+  <svg class="deco" style="top:8%;left:8%;width:46px;" viewBox="0 0 24 24" fill="#f3a6c2"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2 4 6 4c2.2 0 3.7 1.2 4.8 2.7C12 5.2 13.5 4 15.7 4c4 0 5.6 4.4 4 7.7C19.5 16.4 12 21 12 21z"/></svg>
+  <svg class="deco" style="top:18%;right:10%;width:34px;" viewBox="0 0 24 24" fill="#f0c977"><path d="M12 2l2.6 6.9L21 10l-5.4 4.4L17 21l-5-3.7L7 21l1.4-6.6L3 10l6.4-1.1z"/></svg>
+  <svg class="deco" style="bottom:14%;left:14%;width:40px;" viewBox="0 0 24 24" fill="#d9c6f5"><path d="M12 2l2.6 6.9L21 10l-5.4 4.4L17 21l-5-3.7L7 21l1.4-6.6L3 10l6.4-1.1z"/></svg>
+  <svg class="deco" style="bottom:10%;right:8%;width:50px;" viewBox="0 0 24 24" fill="#f3a6c2"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2 4 6 4c2.2 0 3.7 1.2 4.8 2.7C12 5.2 13.5 4 15.7 4c4 0 5.6 4.4 4 7.7C19.5 16.4 12 21 12 21z"/></svg>
+
+  <h1 class="glow-title">HAPPY B'DAY<br><span>QUEEN</span> ✨👑</h1>
+  <p class="intro-sub">a little heaven, just for you, unnie 🦋</p>
+  <button class="enter-btn" id="enterBtn">Enter the Queendom 💖</button>
+  <button class="fab" id="musicBtnIntro" style="position:absolute; bottom:24px; left:24px;">🔇</button>
+</section>
+
+<!-- ============== MAIN SITE ============== -->
+<div class="main-site" id="mainSite">
+
+  <button class="fab" id="themeToggle" title="Toggle light / dark">🌙</button>
+  <button class="fab" id="musicBtn" title="Play / pause music">🔈</button>
+  <button class="fab" id="backToTop" title="Back to top">⬆</button>
+
+  <!-- ---------- HERO ---------- -->
+  <section class="hero reveal">
+    <div class="hero-frame">
+      <div class="ring"></div>
+      <!-- Replace sister.jpg with your photo in VS Code -->
+      <img src="sister.jpeg" alt="My beautiful sister"
+        onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22480%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%23f3c8d8%22/><text x=%2250%25%22 y=%2250%25%22 font-size=%2222%22 fill=%22%237a4f6b%22 text-anchor=%22middle%22 font-family=%22sans-serif%22>📷 add sister.jpg</text></svg>';">
+      <div class="hero-hearts">
+        <span style="top:-10px; left:-20px;">💖</span>
+        <span style="top:30%; right:-26px; animation-delay:1s;">💕</span>
+        <span style="bottom:-14px; left:20%; animation-delay:2s;">💗</span>
+        <span style="bottom:20%; right:-10px; animation-delay:1.5s;">✨</span>
+      </div>
+    </div>
+    <p class="hero-caption">
+      "To my forever icon, drama queen, biggest inspiration, and the prettiest soul ever 💕"
+      <span class="hero-name">— your forever fan</span>
+    </p>
+  </section>
+
+  <!-- ---------- VIDEO MEMORY SECTION ---------- -->
+  <section class="video-section reveal">
+    <h2 class="section-title">Our Main Character Moments 🎬</h2>
+    <p class="section-sub">press play, relive the chaos &amp; the love</p>
+    <div class="video-frame" id="videoFrame">
+      <!-- Replace memory.mp4 with your video file in VS Code -->
+      <video id="memoryVideo" playsinline poster="">
+        <source src="memory.mp4" type="video/mp4">
+      </video>
+      <div class="vignette"></div>
+      <button class="play-btn" id="playBtn">▶</button>
+    </div>
+    <p class="video-caption">a cinematic rewind of every unnie-coded era 🎞️</p>
+  </section>
+
+  <!-- ---------- SECRET QUIZ ---------- -->
+  <section class="quiz-section reveal">
+    <h2 class="section-title">How Well Do You Know Yourself, Unnie? 😎</h2>
+    <p class="section-sub">this part is locked... think you remember the code? 🔐</p>
+
+    <div class="gate-card glass-card" id="quizGate">
+      <h3>Enter the Secret Code</h3>
+      <input type="password" id="quizCodeInput" maxlength="10" placeholder="• • • • • •" inputmode="numeric">
+      <div class="gate-error" id="quizError"></div>
+      <button id="quizUnlockBtn">Unlock Quiz ✨</button>
+    </div>
+
+    <div class="quiz-box" id="quizBox" style="display:none;"></div>
+  </section>
+
+  <!-- ---------- GIFTS / APPRECIATION ---------- -->
+  <section class="gifts-section reveal">
+    <h2 class="section-title">Reasons You're Literally The Best Sister Ever 💖</h2>
+    <p class="section-sub">tap each box to unwrap a little truth</p>
+    <div class="gift-grid" id="giftGrid"></div>
+  </section>
+
+  <!-- ---------- CAKE SECTION ---------- -->
+  <section class="cake-section reveal">
+    <h2 class="section-title">One Wish, Your Highness 🎂</h2>
+    <p class="section-sub">close your eyes, make it count</p>
+    <div class="cake-wrap">
+      <div class="cake">
+        <div class="candles" id="candles">
+          <div class="candle"><div class="flame"></div></div>
+          <div class="candle"><div class="flame"></div></div>
+          <div class="candle"><div class="flame"></div></div>
+        </div>
+        <div class="cake-tier top"></div>
+        <div class="cake-tier"></div>
+        <div class="cake-plate"></div>
+      </div>
+      <button class="blow-btn" id="blowBtn">Blow Candles 🕯️</button>
+      <p class="wish-msg" id="wishMsg">Make a wish, Queen ✨</p>
+    </div>
+  </section>
+
+  <!-- ---------- SECRET LETTER ---------- -->
+  <section class="letter-section reveal">
+    <h2 class="section-title">A Letter Only You Can Open 💌</h2>
+    <p class="section-sub">one more code, unnie. you know this one.</p>
+
+    <div class="gate-card glass-card" id="letterGate">
+      <h3>Enter the Letter Code</h3>
+      <input type="password" id="letterCodeInput" maxlength="10" placeholder="• • • •" inputmode="numeric">
+      <div class="gate-error" id="letterError"></div>
+      <button id="letterUnlockBtn">Open Letter 💖</button>
+    </div>
+
+    <div class="letter-paper glass-card" id="letterBox" style="display:none;">
+      <p class="letter-text" id="letterText"></p>
+      <p class="letter-sign">forever your biggest fan 🤍</p>
+    </div>
+  </section>
+
+  <footer>made with 💖, late nights, and way too many K-dramas — happy birthday, unnie</footer>
+</div>
+
+<canvas id="fxCanvas"></canvas>
+
+<!-- Add your own background music file and rename it music.mp3 -->
+<audio id="bgMusic" loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+/* ============================================================
+   GLOBAL STATE & HELPERS
+   ============================================================ */
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => document.querySelectorAll(sel);
+
+/* ---------- custom cursor ---------- */
+const cursorDot = $('#cursorDot');
+const cursorRing = $('#cursorRing');
+window.addEventListener('mousemove', (e) => {
+  cursorDot.style.left = e.clientX + 'px';
+  cursorDot.style.top = e.clientY + 'px';
+  cursorRing.style.left = e.clientX + 'px';
+  cursorRing.style.top = e.clientY + 'px';
+});
+$$('button,a,input,label').forEach(el=>{
+  el.addEventListener('mouseenter', ()=>{ cursorRing.style.width='50px'; cursorRing.style.height='50px'; cursorRing.style.borderColor='#d9c6f5';});
+  el.addEventListener('mouseleave', ()=>{ cursorRing.style.width='34px'; cursorRing.style.height='34px'; cursorRing.style.borderColor='var(--rosegold)';});
+});
+
+/* ---------- ambient floating particles (stars / hearts / sparkles / butterflies) ---------- */
+const particleEmojis = ['💖','✨','⭐','🦋','💫','🌸'];
+function spawnParticle(){
+  const p = document.createElement('div');
+  p.className = 'particle';
+  p.textContent = particleEmojis[Math.floor(Math.random()*particleEmojis.length)];
+  const size = 12 + Math.random()*16;
+  p.style.fontSize = size + 'px';
+  p.style.left = Math.random()*100 + 'vw';
+  const duration = 8 + Math.random()*10;
+  p.style.setProperty('--drift', (Math.random()*120-60)+'px');
+  p.style.animationDuration = duration + 's';
+  $('#particles').appendChild(p);
+  setTimeout(()=> p.remove(), duration*1000 + 200);
+}
+setInterval(spawnParticle, 450);
+for(let i=0;i<10;i++) setTimeout(spawnParticle, i*200);
+
+/* ============================================================
+   LOADER
+   ============================================================ */
+window.addEventListener('load', ()=>{
+  setTimeout(()=>{
+    const loader = $('#loader');
+    loader.style.opacity = '0';
+    loader.style.visibility = 'hidden';
+    setTimeout(()=> loader.remove(), 900);
+  }, 1400);
+});
+
+/* ============================================================
+   INTRO -> MAIN SITE TRANSITION
+   ============================================================ */
+$('#enterBtn').addEventListener('click', ()=>{
+  // Android/Chrome only allow audio playback after a real user tap.
+  // We quietly "warm up" the audio element here so the music button
+  // works on the very first tap later, instead of silently failing.
+  bgMusic.play().then(()=>{ bgMusic.pause(); bgMusic.currentTime = 0; }).catch(()=>{ /* no music file added yet */ });
+
+  $('#intro').classList.add('hide');
+  setTimeout(()=>{
+    $('#mainSite').classList.add('show');
+    initScrollReveal();
+  }, 500);
+});
+
+/* ============================================================
+   MUSIC CONTROL (intro + main button stay in sync)
+   ============================================================ */
+const bgMusic = $('#bgMusic');
+let musicPlaying = false;
+function toggleMusic(){
+  if(musicPlaying){
+    bgMusic.pause();
+  } else {
+    bgMusic.play().catch(()=>{ /* file not added yet, ignore */ });
+  }
+  musicPlaying = !musicPlaying;
+  const icon = musicPlaying ? '🔊' : '🔇';
+  $('#musicBtnIntro').textContent = icon;
+  $('#musicBtn').textContent = musicPlaying ? '🔊' : '🔈';
+}
+$('#musicBtnIntro').addEventListener('click', toggleMusic);
+$('#musicBtn').addEventListener('click', toggleMusic);
+
+/* ============================================================
+   DARK / LIGHT MODE TOGGLE
+   ============================================================ */
+const themeToggle = $('#themeToggle');
+themeToggle.addEventListener('click', ()=>{
+  const isDark = document.body.getAttribute('data-theme') === 'dark';
+  document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  themeToggle.textContent = isDark ? '🌙' : '☀️';
+});
+
+/* ============================================================
+   SCROLL REVEAL ANIMATIONS
+   ============================================================ */
+function initScrollReveal(){
+  const items = $$('.reveal');
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){ entry.target.classList.add('active'); }
+    });
+  }, {threshold:0.15});
+  items.forEach(el=> obs.observe(el));
+}
+
+/* ---------- back to top button ---------- */
+window.addEventListener('scroll', ()=>{
+  $('#backToTop').classList.toggle('visible', window.scrollY > 500);
+});
+$('#backToTop').addEventListener('click', ()=> window.scrollTo({top:0, behavior:'smooth'}));
+
+/* ============================================================
+   VIDEO PLAY BUTTON
+   ============================================================ */
+const memoryVideo = $('#memoryVideo');
+const playBtn = $('#playBtn');
+playBtn.addEventListener('click', ()=>{
+  if(memoryVideo.paused){
+    memoryVideo.play().catch(()=> alert('Add memory.mp4 next to index.html to see your video here 🎬'));
+    playBtn.style.opacity = '0';
+  } else {
+    memoryVideo.pause();
+    playBtn.style.opacity = '1';
+  }
+});
+memoryVideo.addEventListener('pause', ()=> playBtn.style.opacity='1');
+
+/* ============================================================
+   FX CANVAS — confetti + fireworks + floating hearts burst
+   ============================================================ */
+const canvas = $('#fxCanvas');
+const ctx = canvas.getContext('2d');
+function resizeCanvas(){ canvas.width = innerWidth; canvas.height = innerHeight; }
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+let fxParticles = [];
+function launchConfetti(count=140){
+  const colors = ['#f3a6c2','#d9c6f5','#f0c977','#c9e9f6','#ffffff'];
+  for(let i=0;i<count;i++){
+    fxParticles.push({
+      type:'confetti',
+      x: Math.random()*canvas.width,
+      y: -20 - Math.random()*100,
+      vx: (Math.random()-0.5)*4,
+      vy: 2 + Math.random()*4,
+      size: 5 + Math.random()*6,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      rot: Math.random()*360,
+      vrot: (Math.random()-0.5)*10,
+      life: 220
+    });
+  }
+}
+function launchFireworks(count=4){
+  for(let f=0; f<count; f++){
+    const cx = canvas.width*(0.2+Math.random()*0.6);
+    const cy = canvas.height*(0.2+Math.random()*0.4);
+    const color = ['#f3a6c2','#f0c977','#d9c6f5','#c9e9f6'][Math.floor(Math.random()*4)];
+    for(let i=0;i<40;i++){
+      const angle = (Math.PI*2*i)/40;
+      const speed = 2 + Math.random()*3;
+      fxParticles.push({
+        type:'spark', x:cx, y:cy,
+        vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed,
+        size: 2+Math.random()*2, color, life: 60+Math.random()*30
+      });
+    }
+  }
+}
+function launchHearts(count=18){
+  for(let i=0;i<count;i++){
+    fxParticles.push({
+      type:'heart', x: Math.random()*canvas.width, y: canvas.height + 20,
+      vx:(Math.random()-0.5)*1.2, vy:-(1.5+Math.random()*2),
+      size: 16+Math.random()*14, life:160
+    });
+  }
+}
+function animateFx(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  fxParticles.forEach(p=>{
+    p.x += p.vx; p.y += p.vy; p.life--;
+    if(p.type==='confetti'){
+      p.vy += 0.03; p.rot += p.vrot;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle = p.color; ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size*0.6);
+      ctx.restore();
+    } else if(p.type==='spark'){
+      p.vy += 0.02;
+      ctx.globalAlpha = Math.max(p.life/80,0);
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fill();
+      ctx.globalAlpha = 1;
+    } else if(p.type==='heart'){
+      ctx.font = p.size+'px serif';
+      ctx.globalAlpha = Math.max(p.life/160,0);
+      ctx.fillText('💖', p.x, p.y);
+      ctx.globalAlpha = 1;
+    }
+  });
+  fxParticles = fxParticles.filter(p=> p.life>0 && p.y < canvas.height+60);
+  requestAnimationFrame(animateFx);
+}
+animateFx();
+
+/* ============================================================
+   SECRET QUIZ SECTION
+   ============================================================ */
+const QUIZ_CODE = '123456';
+$('#quizUnlockBtn').addEventListener('click', ()=>{
+  const val = $('#quizCodeInput').value.trim();
+  if(val === QUIZ_CODE){
+    $('#quizGate').style.display = 'none';
+    $('#quizBox').style.display = 'block';
+    buildQuiz();
+  } else {
+    $('#quizError').textContent = 'wrong code... try again, unnie 🥲';
+  }
+});
+
+const quizQuestions = [
+  { q:"My favourite character?", options:["Kim Tan","Sunjae","Gu Won","Jungkook"], answer:"Sunjae" },
+  { q:"What do I love the most?", options:["Studying","Watching K-Dramas","Sleeping","Gaming"], answer:"Watching K-Dramas" },
+  { q:"One word to describe me?", options:["Crazy","Funny","Angel","Lazy"], answer:"Angel" },
+  { q:"Favourite place?", options:["Paris","Japan","South Korea","Switzerland"], answer:"South Korea" },
+  { q:"One word everyone uses for me?", options:["Genius","All-Rounder","Introvert","Silent"], answer:"All-Rounder" },
+  { q:"Which show did we watch together?", options:["Lovely Runner","Crash Landing on You","Queen of Tears","Goblin"], answer:"Queen of Tears" },
+  { q:"My iconic nickname?", options:["Shubdi Ki Doobdi.com","Sunshine","Cutie","Queen"], answer:"Shubdi Ki Doobdi.com" }
+];
+
+function buildQuiz(){
+  const box = $('#quizBox');
+  box.innerHTML = '';
+  quizQuestions.forEach((item, idx)=>{
+    const qDiv = document.createElement('div');
+    qDiv.className = 'quiz-q glass-card';
+    qDiv.innerHTML = `<h4>${idx+1}. ${item.q}</h4>
+      <div class="quiz-options">
+        ${item.options.map(opt => `
+          <label>
+            <input type="radio" name="q${idx}" value="${opt}"> ${opt}
+          </label>`).join('')}
+      </div>`;
+    box.appendChild(qDiv);
+  });
+  const submitBtn = document.createElement('button');
+  submitBtn.className = 'quiz-submit';
+  submitBtn.textContent = 'Reveal My Score 💅';
+  submitBtn.addEventListener('click', gradeQuiz);
+  box.appendChild(submitBtn);
+}
+
+function gradeQuiz(){
+  let score = 0;
+  quizQuestions.forEach((item, idx)=>{
+    const chosen = document.querySelector(`input[name="q${idx}"]:checked`);
+    if(chosen && chosen.value === item.answer) score++;
+  });
+  const box = $('#quizBox');
+  const total = quizQuestions.length;
+  let message = `You scored ${score} / ${total} 💕`;
+  if(score === total){
+    message = "Slayyy Queen! You know yourself too well 😭💅✨";
+    launchConfetti(180);
+  } else {
+    launchConfetti(80);
+  }
+  box.innerHTML = `<div class="quiz-result glass-card">${message}</div>`;
+}
+
+/* ============================================================
+   GIFTS / APPRECIATION SECTION
+   ============================================================ */
+const giftWords = [
+  "Our Big Sister 👑","My Inspiration 🌸","Family's Sunshine ☀️","Drama Partner 🍿",
+  "My Safe Place 🤍","Walking Wikipedia 🧠","Multitalented Queen 💅","World's Best Unnie 🇰🇷",
+  "My Forever Support System 🫂","My Angel 😇"
+];
+const giftGrid = $('#giftGrid');
+giftWords.forEach((word)=>{
+  const box = document.createElement('div');
+  box.className = 'gift-box';
+  box.innerHTML = `<span class="gift-emoji">🎁</span><span class="gift-label">${word}</span>`;
+  box.addEventListener('click', ()=>{
+    if(box.classList.contains('opened')) return;
+    box.classList.add('opened');
+    launchHearts(8);
+  });
+  giftGrid.appendChild(box);
+});
+
+/* ============================================================
+   CAKE SECTION — blow candles
+   ============================================================ */
+$('#blowBtn').addEventListener('click', ()=>{
+  $$('#candles .flame').forEach(f => f.classList.add('out'));
+  $('#wishMsg').classList.add('show');
+  launchConfetti(160);
+  launchFireworks(4);
+  launchHearts(20);
+  document.body.style.transition = 'box-shadow .6s ease';
+});
+
+/* ============================================================
+   SECRET LETTER SECTION
+   ============================================================ */
+const LETTER_CODE = '2306';
+const letterContent =
+`Happy bdayyyy shubhi didi love u so muchh u r the most admirable person i love ur dance how u look everything about u how u love to watch shows i love itt and how u talk peacefully ya kanu ki bhasha m fake hehehe but uk naa we all love u soo muchh aap merko raat k 3 bje bhi kaam btaoge na m krlungi toh u cann apna btana prr kisi aur ka ni aur m chahti hun ki u grow so much aur sooo richh bnoooo love u the most aur jldi s ek th baar dehi aao uk heaven ife jeene aur hmara fav lovely runner sunjayaaaaaaa :)okyyy tataaa happy bdayyyyyy
+
+— your forever fan`;
+
+$('#letterUnlockBtn').addEventListener('click', ()=>{
+  const val = $('#letterCodeInput').value.trim();
+  if(val === LETTER_CODE){
+    $('#letterGate').style.display = 'none';
+    $('#letterBox').style.display = 'block';
+    typewriterEffect($('#letterText'), letterContent);
+  } else {
+    $('#letterError').textContent = "hmm, that's not it... think again 🤔";
+  }
+});
+
+function typewriterEffect(el, text){
+  el.innerHTML = '';
+  let i = 0;
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor-blink';
+  cursor.textContent = '|';
+  function type(){
+    if(i < text.length){
+      el.textContent = text.slice(0, i+1);
+      el.appendChild(cursor);
+      i++;
+      setTimeout(type, 22);
+    }
+  }
+  type();
+}
+
+/* ============================================================
+   ENTER KEY SUPPORT for password fields
+   ============================================================ */
+$('#quizCodeInput').addEventListener('keydown', e=>{ if(e.key==='Enter') $('#quizUnlockBtn').click(); });
+$('#letterCodeInput').addEventListener('keydown', e=>{ if(e.key==='Enter') $('#letterUnlockBtn').click(); });
+</script>
+</body>
+</html>
